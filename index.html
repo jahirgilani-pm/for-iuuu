@@ -461,16 +461,19 @@
     }
     .game-note {
       position: fixed;
-      bottom: 1rem;
+      bottom: 1.2rem;
       left: 50%;
       transform: translateX(-50%);
       font-family: 'Cormorant Garamond', serif;
       font-style: italic;
-      font-size: 0.85rem;
-      color: var(--accent);
-      opacity: 0.7;
+      font-size: clamp(0.85rem, 2.5vw, 1rem);
+      color: var(--text);
+      opacity: 0.9;
       display: none;
-      white-space: nowrap;
+      white-space: normal;
+      text-align: center;
+      padding: 0 1.5rem;
+      width: 100%;
       z-index: 1;
     }
 
@@ -510,9 +513,9 @@
     #final-screen {
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 5rem 2rem 4rem;
-      justify-content: flex-start;
-      gap: 3.5rem;
+      padding: 5rem 2rem 3rem;
+      justify-content: center;
+      gap: 2.5rem;
       cursor: default;
     }
 
@@ -611,6 +614,112 @@
       color: #5a4a42;
       padding: 4px 6px 7px;
       line-height: 1.3;
+    }
+
+    /* ── STORY BUTTON ── */
+    .story-btn {
+      background: transparent;
+      border: 1px solid rgba(196,160,168,0.4);
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 0.7rem 2.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 0.5rem;
+    }
+    .story-btn:hover { background: rgba(196,160,168,0.1); border-color: var(--accent); }
+
+    /* ── SLIDESHOW ── */
+    #slideshow-screen { padding: 0; overflow: hidden; }
+
+    .slide-counter {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.22em;
+      z-index: 10;
+    }
+
+    .slide-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 2rem 4rem;
+      gap: 1.2rem;
+    }
+
+    .slide-photo {
+      max-height: 74vh;
+      max-width: 80vw;
+      object-fit: contain;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.55);
+      opacity: 0;
+      transition: opacity 0.45s ease;
+    }
+    .slide-photo.visible { opacity: 1; }
+
+    .slide-caption {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
+      color: var(--accent);
+      text-align: center;
+      letter-spacing: 0.04em;
+      opacity: 0;
+      transition: opacity 0.45s ease 0.15s;
+    }
+    .slide-caption.visible { opacity: 1; }
+
+    .slide-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: 1px solid rgba(196,160,168,0.25);
+      color: var(--accent);
+      font-size: 1.2rem;
+      width: 2.8rem;
+      height: 2.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s;
+    }
+    .slide-nav:hover:not(:disabled) { background: rgba(196,160,168,0.1); }
+    .slide-nav:disabled { opacity: 0.15; cursor: default; }
+    .slide-nav.prev { left: 1rem; }
+    .slide-nav.next { right: 1rem; }
+
+    /* ── LOVE NOTE ── */
+    #lovenote-screen { gap: 0.8rem; }
+
+    .love-wrap { text-align: center; }
+
+    .love-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 8vw, 5.5rem);
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 0.03em;
+      animation: fadeUp 1s ease forwards;
+    }
+
+    .love-heart {
+      font-size: clamp(2rem, 6vw, 4rem);
+      color: var(--accent);
+      opacity: 0;
+      animation: fadeUp 1s ease 0.5s forwards;
+      display: block;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -786,7 +895,7 @@
     <circle id="cut-ring" cx="35" cy="35" r="30"/>
   </svg>
   <p class="game-hint" id="game-hint">Hold the knife over the cake to cut it</p>
-  <p class="game-note" id="game-note">p.s. don't say sugar — and cut your cake quietly.</p>
+  <p class="game-note" id="game-note">p.s. don't say sugar, and cut your cake quietly.</p>
 </div>
 
 <!-- SCREEN 4: ENVELOPE -->
@@ -811,28 +920,26 @@
       </div>
     </div>
 
-    <div class="photo-grid" id="photo-grid">
-      <!--
-        Drop your 6 photos in the same folder as this file.
-        Rename them photo1.jpg ... photo6.jpg
-      -->
-      <div class="photo-slot"><div class="img-wrap"><img src="photo1.jpg" alt=""></div><div class="photo-caption">S01E01: We Said Biryani, We Met a Dog</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo2.jpg" alt=""></div><div class="photo-caption">S01E02: The Official Beginning</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo3.jpg" alt=""></div><div class="photo-caption">S01E03: The First Escape</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo4.jpg" alt=""></div><div class="photo-caption">S01E04: The Extended Cut</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo5.jpg" alt=""></div><div class="photo-caption">S01E05: Fish First, Cricket Second</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo6.jpg" alt=""></div><div class="photo-caption">S01E06: The Sweetest Deal</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo7.jpg" alt=""></div><div class="photo-caption">S01E07: The Hopkins Hypothesis</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo8.jpg" alt=""></div><div class="photo-caption">S01E08: Our First Valentine</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo9.jpg" alt=""></div><div class="photo-caption">S01E09: She Found Another Dog</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo10.jpg" alt=""></div><div class="photo-caption">S01E10: No Distance Too Far (For Fish)</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo11.jpg" alt=""></div><div class="photo-caption">S01E11: The Island Incident</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo12.jpg" alt=""></div><div class="photo-caption">S01E12: My Paplet in Her Natural Habitat</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo13.jpg" alt=""></div><div class="photo-caption">S01E13: The Loose Canon</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo14.jpg" alt=""></div><div class="photo-caption">S01E14: The Eid Protocol</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo15.jpg" alt=""></div><div class="photo-caption">S01E15: The Thirteenth Floor</div></div>
-      <div class="photo-slot"><div class="img-wrap"><img src="photo16.jpg" alt=""></div><div class="photo-caption">S01E16: The Goa Files</div></div>
-    </div>
+    <button class="story-btn" onclick="startSlideshow()">see our story &rarr;</button>
+  </div>
+</div>
+
+<!-- SCREEN 6: SLIDESHOW -->
+<div id="slideshow-screen" class="screen">
+  <div class="slide-counter" id="slide-counter">1 / 16</div>
+  <button class="slide-nav prev" id="slide-prev" onclick="changeSlide(-1)">&#8592;</button>
+  <div class="slide-container">
+    <img class="slide-photo" id="slide-img" src="" alt="">
+    <div class="slide-caption" id="slide-caption"></div>
+  </div>
+  <button class="slide-nav next" id="slide-next" onclick="changeSlide(1)">&#8594;</button>
+</div>
+
+<!-- SCREEN 7: LOVE NOTE -->
+<div id="lovenote-screen" class="screen">
+  <div class="love-wrap">
+    <div class="love-text">I love you, bebo!</div>
+    <div class="love-heart">&hearts;</div>
   </div>
 </div>
 
@@ -1212,7 +1319,7 @@ function doCut(cake) {
     ee.classList.remove('open'); void ee.offsetWidth;
     setTimeout(()=>{
       ee.classList.add('open');
-      setTimeout(()=>doFlash(()=>{show('final-screen');startConfetti();initPolaroids();}),500);
+      setTimeout(()=>doFlash(()=>{show('final-screen');startConfetti();}),500);
     },1400);
   },700);
 }
@@ -1250,21 +1357,72 @@ function startConfetti() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// POLAROIDS
+// SLIDESHOW
 // ─────────────────────────────────────────────────────────────────────────────
-function initPolaroids() {
-  document.querySelectorAll('.photo-slot').forEach(slot=>{
-    const rot=(Math.random()*8)-4;
-    slot.style.transform=`rotate(${rot}deg)`;
-    slot.dataset.baseRot=rot;
-    slot.addEventListener('mousemove',e=>{
-      const r=slot.getBoundingClientRect();
-      const px=(e.clientX-r.left)/r.width-0.5;
-      const py=(e.clientY-r.top)/r.height-0.5;
-      slot.style.transform=`rotate(0deg) scale(1.08) perspective(600px) rotateY(${px*12}deg) rotateX(${-py*12}deg)`;
-    });
-    slot.addEventListener('mouseleave',()=>{slot.style.transform=`rotate(${slot.dataset.baseRot}deg)`;});
-  });
+const SLIDES = [
+  { src: 'photo1.jpg',  caption: 'S01E01: We Said Biryani, We Met a Dog' },
+  { src: 'photo2.jpg',  caption: 'S01E02: The Official Beginning' },
+  { src: 'photo3.jpg',  caption: 'S01E03: The First Escape' },
+  { src: 'photo4.jpg',  caption: 'S01E04: The Extended Cut' },
+  { src: 'photo5.jpg',  caption: 'S01E05: Fish First, Cricket Second' },
+  { src: 'photo6.jpg',  caption: 'S01E06: The Sweetest Deal' },
+  { src: 'photo7.jpg',  caption: 'S01E07: The Hopkins Hypothesis' },
+  { src: 'photo8.jpg',  caption: 'S01E08: Our First Valentine' },
+  { src: 'photo9.jpg',  caption: 'S01E09: She Found Another Dog' },
+  { src: 'photo10.jpg', caption: 'S01E10: No Distance Too Far (For Fish)' },
+  { src: 'photo11.jpg', caption: 'S01E11: The Island Incident' },
+  { src: 'photo12.jpg', caption: 'S01E12: My Paplet in Her Natural Habitat' },
+  { src: 'photo13.jpg', caption: 'S01E13: The Loose Canon' },
+  { src: 'photo14.jpg', caption: 'S01E14: The Eid Protocol' },
+  { src: 'photo15.jpg', caption: 'S01E15: The Thirteenth Floor' },
+  { src: 'photo16.jpg', caption: 'S01E16: The Goa Files' },
+];
+
+let currentSlide = 0;
+
+function startSlideshow() {
+  currentSlide = 0;
+  show('slideshow-screen');
+  renderSlide();
+
+  // swipe support
+  let tx = 0;
+  const ss = document.getElementById('slideshow-screen');
+  ss.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+  ss.addEventListener('touchend', e => {
+    const diff = tx - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) changeSlide(diff > 0 ? 1 : -1);
+  }, { passive: true });
+}
+
+function renderSlide() {
+  const img     = document.getElementById('slide-img');
+  const cap     = document.getElementById('slide-caption');
+  const counter = document.getElementById('slide-counter');
+  const prev    = document.getElementById('slide-prev');
+  const next    = document.getElementById('slide-next');
+
+  img.classList.remove('visible');
+  cap.classList.remove('visible');
+
+  setTimeout(() => {
+    img.src         = SLIDES[currentSlide].src;
+    cap.textContent = SLIDES[currentSlide].caption;
+    counter.textContent = `${currentSlide + 1} / ${SLIDES.length}`;
+    prev.disabled = currentSlide === 0;
+    next.textContent = currentSlide === SLIDES.length - 1 ? 'finish' : '→';
+    img.onload = () => { img.classList.add('visible'); cap.classList.add('visible'); };
+    if (img.complete) { img.classList.add('visible'); cap.classList.add('visible'); }
+  }, 200);
+}
+
+function changeSlide(dir) {
+  if (dir === 1 && currentSlide === SLIDES.length - 1) {
+    doFlash(() => { show('lovenote-screen'); });
+    return;
+  }
+  currentSlide = Math.max(0, Math.min(SLIDES.length - 1, currentSlide + dir));
+  renderSlide();
 }
 </script>
 </body>
