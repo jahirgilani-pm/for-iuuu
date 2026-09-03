@@ -721,6 +721,33 @@
       display: block;
       margin-top: 0.5rem;
     }
+
+    .love-nav {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 1s ease 1s forwards;
+    }
+
+    .love-nav-btn {
+      background: transparent;
+      border: 1px solid rgba(196,160,168,0.35);
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.4rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .love-nav-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -940,6 +967,11 @@
   <div class="love-wrap">
     <div class="love-text">I love you, bebo!</div>
     <div class="love-heart">&hearts;</div>
+    <div class="love-nav">
+      <button class="love-nav-btn" onclick="startSlideshow()">photos</button>
+      <button class="love-nav-btn" onclick="sliced=false;cutMs=0;show('game-screen');initGame()">cut cake again</button>
+      <button class="love-nav-btn" onclick="location.reload()">start over</button>
+    </div>
   </div>
 </div>
 
