@@ -459,6 +459,20 @@
       white-space: nowrap;
       z-index: 1;
     }
+    .game-note {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.85rem;
+      color: var(--accent);
+      opacity: 0.7;
+      display: none;
+      white-space: nowrap;
+      z-index: 1;
+    }
 
     /* ── ENVELOPE ── */
     #env-screen { gap: 1.5rem; }
@@ -772,6 +786,7 @@
     <circle id="cut-ring" cx="35" cy="35" r="30"/>
   </svg>
   <p class="game-hint" id="game-hint">Hold the knife over the cake to cut it</p>
+  <p class="game-note" id="game-note">p.s. don't say sugar — and cut your cake quietly.</p>
 </div>
 
 <!-- SCREEN 4: ENVELOPE -->
@@ -1080,6 +1095,7 @@ function initGame() {
 
   cake.style.display='block'; knife.style.display='block';
   svg.style.display='block'; hint.style.display='block';
+  document.getElementById('game-note').style.display='block';
 
   const gs = document.getElementById('game-screen');
   gs.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
