@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, Iuuu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #1a1208;
+      --text: #f0ead6;
+      --accent: #c4a0a8;
+      --gold: #c8a96e;
+      --muted: rgba(240, 234, 214, 0.35);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── SPLASH ── */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: #1a1208;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 8000;
+      transition: opacity 0.9s ease;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+
+    .splash-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: splashIn 2.6s ease forwards;
+    }
+    .splash-hearts {
+      position: absolute;
+      font-size: 1.2rem;
+      opacity: 0;
+      animation: splashHearts 2.6s ease forwards;
+      color: var(--accent);
+      letter-spacing: 1.5rem;
+    }
+    @keyframes splashIn {
+      0%   { opacity: 0; transform: translateY(16px) scale(0.97); filter: blur(6px); }
+      30%  { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      75%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes splashHearts {
+      0%   { opacity: 0; }
+      40%  { opacity: 0.5; }
+      75%  { opacity: 0.5; }
+      100% { opacity: 0; }
+    }
+
+    /* ── FLASH ── */
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: opacity 0.25s ease;
+    }
+
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.9s ease;
+    }
+    .screen.active { opacity: 1; pointer-events: all; }
+
+    /* ── LOGIN ── */
+    #login-screen { gap: 0; padding: 2rem; text-align: center; }
+
+    #login-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* food doodles */
+    .doodle {
+      position: absolute;
+      pointer-events: none;
+      color: var(--accent);
+      opacity: 0.28;
+      animation: floatDoodle 7s ease-in-out infinite;
+    }
+    .doodle svg { display: block; }
+    @keyframes floatDoodle {
+      0%, 100% { transform: translateY(0px) rotate(var(--r)); }
+      50%       { transform: translateY(-10px) rotate(var(--r)); }
+    }
+
+    .login-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .login-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.8;
+    }
+
+    .login-intro {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.65;
+      letter-spacing: 0.02em;
+    }
+    .login-intro span {
+      color: var(--accent);
+    }
+
+    .login-subtext {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      font-style: italic;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: -0.5rem;
+    }
+
+    /* countdown */
+    #countdown-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .countdown-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .countdown-digits {
+      display: flex;
+      gap: clamp(0.5rem, 3vw, 1rem);
+      align-items: flex-end;
+    }
+    .cd-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.15rem;
+    }
+    .cd-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1;
+      min-width: 2.2ch;
+      text-align: center;
+    }
+    .cd-sep {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      color: var(--accent);
+      opacity: 0.5;
+      padding-bottom: 0.2rem;
+    }
+    .cd-lbl {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* unlock animation */
+    #unlock-msg {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      text-align: center;
+    }
+    #unlock-msg.show { opacity: 1; }
+
+    .divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(196, 160, 168, 0.3);
+    }
+
+    .login-label {
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+
+    .passphrase-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(196, 160, 168, 0.4);
+      color: var(--text);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem;
+      text-align: center;
+      letter-spacing: 0.35em;
+      padding: 0.4rem 1rem 0.6rem;
+      outline: none;
+      width: 260px;
+      caret-color: var(--accent);
+      transition: border-color 0.3s, opacity 0.4s;
+    }
+    .passphrase-input:focus { border-color: var(--accent); }
+    .passphrase-input::placeholder {
+      color: var(--muted);
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+    }
+    .passphrase-input:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .enter-btn {
+      background: transparent;
+      border: 1px solid rgba(196, 160, 168, 0.4);
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 0.7rem 2.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .enter-btn:hover:not(:disabled) {
+      background: rgba(196, 160, 168, 0.1);
+      border-color: var(--accent);
+    }
+    .enter-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .error-msg {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--accent);
+      font-size: 0.95rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      min-height: 1.3rem;
+    }
+    .error-msg.show { opacity: 1; }
+
+    /* ── BIRTHDAY ── */
+    #birthday-screen { cursor: pointer; }
+
+    #fireworks-canvas {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .birthday-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(18px);
+      filter: blur(7px);
+      animation: charIn 0.55s ease forwards;
+    }
+    @keyframes charIn {
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    .birthday-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.5rem, 11vw, 8rem);
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1.05;
+      letter-spacing: 0.02em;
+    }
+
+    .birthday-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.5vw, 1.6rem);
+      font-style: italic;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      margin-top: 0.8rem;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .tap-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      animation: blink 2.4s ease infinite;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50%       { opacity: 0.9; }
+    }
+
+    /* ── GAME ── */
+    #game-screen { cursor: none; }
+    @media (hover: none) {
+      #game-screen { cursor: default; }
+      #knife { display: none !important; }
+    }
+
+    #trail-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 998;
+    }
+
+    .game-intro-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-style: italic;
+      color: var(--text);
+      text-align: center;
+      transition: opacity 1s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    #cake {
+      position: fixed;
+      font-size: 5.5rem;
+      user-select: none;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      filter: drop-shadow(0 0 16px rgba(196, 160, 168, 0.2));
+      display: none;
+      z-index: 10;
+    }
+    #cake.panic {
+      animation: shudder 0.12s linear infinite;
+      filter: drop-shadow(0 0 24px rgba(196, 160, 168, 0.6));
+    }
+    @keyframes shudder {
+      0%   { transform: translate(calc(-50% + 3px), calc(-50% - 2px)); }
+      25%  { transform: translate(calc(-50% - 3px), calc(-50% + 2px)); }
+      50%  { transform: translate(calc(-50% + 2px), calc(-50% + 3px)); }
+      75%  { transform: translate(calc(-50% - 2px), calc(-50% - 3px)); }
+      100% { transform: translate(calc(-50% + 3px), calc(-50% - 2px)); }
+    }
+
+    .cake-half {
+      position: fixed;
+      font-size: 5.5rem;
+      user-select: none;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      z-index: 11;
+    }
+    .cake-half-left  { clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); }
+    .cake-half-right { clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%); }
+
+    @keyframes splitLeft {
+      to { transform: translate(calc(-50% - 90px), calc(-50% - 60px)) rotate(-35deg); opacity: 0; }
+    }
+    @keyframes splitRight {
+      to { transform: translate(calc(-50% + 90px), calc(-50% - 60px)) rotate(35deg); opacity: 0; }
+    }
+
+    #knife {
+      position: fixed;
+      font-size: 2.8rem;
+      pointer-events: none;
+      z-index: 1000;
+      transform: translate(-50%, -50%) rotate(135deg);
+      display: none;
+    }
+
+    #cut-svg {
+      position: fixed;
+      width: 70px;
+      height: 70px;
+      pointer-events: none;
+      z-index: 999;
+      display: none;
+      transform: translate(-50%, -50%);
+    }
+    #cut-ring {
+      fill: none;
+      stroke: var(--gold);
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-dasharray: 188;
+      stroke-dashoffset: 188;
+      transform: rotate(-90deg);
+      transform-origin: 35px 35px;
+      transition: stroke-dashoffset 0.08s linear;
+    }
+
+    #burst-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      display: none;
+    }
+
+    .game-hint {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      display: none;
+      white-space: nowrap;
+      z-index: 1;
+    }
+
+    /* ── ENVELOPE ── */
+    #env-screen { gap: 1.5rem; }
+
+    .env-emoji {
+      font-size: 7rem;
+      display: block;
+      animation: envAppear 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+    @keyframes envAppear {
+      from { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .env-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeIn 0.6s ease 0.5s forwards;
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    .env-emoji.open {
+      animation: envOpen 0.6s ease forwards;
+    }
+    @keyframes envOpen {
+      0%   { transform: scale(1) rotate(0deg); }
+      40%  { transform: scale(1.25) rotate(-8deg); }
+      100% { transform: scale(0.1) rotate(20deg); opacity: 0; }
+    }
+
+    /* ── FINAL ── */
+    #final-screen {
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 5rem 2rem 4rem;
+      justify-content: flex-start;
+      gap: 3.5rem;
+      cursor: default;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .final-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3rem;
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+      animation: fadeUp 1s ease forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .final-msg { text-align: center; }
+
+    .final-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 4vw, 3rem);
+      font-weight: 300;
+      line-height: 1.4;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+    }
+
+    .final-body {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-style: italic;
+      color: var(--accent);
+      line-height: 1.9;
+    }
+
+    /* ── POLAROID GALLERY ── */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      width: 100%;
+    }
+    @media (max-width: 600px) {
+      .photo-grid { grid-template-columns: repeat(2, 1fr); gap: 0.9rem; }
+    }
+
+    .photo-slot {
+      background: #f8f4ef;
+      padding: 7px 7px 38px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+      cursor: default;
+      transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1), box-shadow 0.35s ease;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+    .photo-slot:hover {
+      transform: rotate(0deg) scale(1.08) !important;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.65);
+      z-index: 2;
+    }
+    .photo-slot .img-wrap {
+      width: 100%;
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: #e8e0d5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: rgba(0,0,0,0.15);
+    }
+    .photo-slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .photo-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.72rem;
+      color: #5a4a42;
+      padding: 4px 6px 7px;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <span class="splash-hearts">♥ ♥ ♥</span>
+  <div class="splash-text">for you.</div>
+</div>
+
+<!-- Flash overlay -->
+<div id="flash"></div>
+
+<!-- SCREEN 1: LOGIN -->
+<div id="login-screen" class="screen">
+  <canvas id="login-canvas"></canvas>
+
+  <!-- food doodles -->
+  <!-- rava fish 1 -->
+  <div class="doodle" style="top:8%;left:6%;--r:-18deg;animation-delay:0s;animation-duration:8s">
+    <svg width="90" height="56" viewBox="0 0 90 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="44" cy="30" rx="28" ry="14"/>
+      <path d="M72 30 L84 18 L84 42 Z"/>
+      <circle cx="24" cy="26" r="2.5" fill="currentColor" stroke="none"/>
+      <circle cx="38" cy="20" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="50" cy="23" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="42" cy="36" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="56" cy="31" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="60" cy="22" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
+  <!-- biryani 1 -->
+  <div class="doodle" style="top:12%;right:5%;--r:12deg;animation-delay:1.5s;animation-duration:9s">
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 42 Q12 68 40 68 Q68 68 68 42"/>
+      <line x1="12" y1="42" x2="68" y2="42"/>
+      <path d="M20 42 Q40 20 60 42"/>
+      <path d="M28 33 Q33 27 38 33"/>
+      <path d="M42 28 Q47 22 52 28"/>
+      <circle cx="35" cy="38" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="46" cy="35" r="1.5" fill="currentColor" stroke="none"/>
+      <circle cx="40" cy="45" r="1.5" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
+  <!-- french fries 1 -->
+  <div class="doodle" style="bottom:18%;left:4%;--r:8deg;animation-delay:0.8s;animation-duration:10s">
+    <svg width="60" height="90" viewBox="0 0 60 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 46 L8 82 L52 82 L46 46 Z"/>
+      <line x1="14" y1="46" x2="46" y2="46"/>
+      <path d="M22 8 L22 46" stroke-width="5" stroke-linecap="round"/>
+      <path d="M30 4 L30 46" stroke-width="5" stroke-linecap="round"/>
+      <path d="M38 10 L38 46" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- rava fish 2 -->
+  <div class="doodle" style="bottom:14%;right:7%;--r:22deg;animation-delay:2s;animation-duration:7.5s">
+    <svg width="70" height="44" viewBox="0 0 90 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="44" cy="30" rx="28" ry="14"/>
+      <path d="M72 30 L84 18 L84 42 Z"/>
+      <circle cx="24" cy="26" r="2.5" fill="currentColor" stroke="none"/>
+      <circle cx="40" cy="21" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="52" cy="25" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="44" cy="37" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="58" cy="32" r="1.8" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
+  <!-- biryani 2 -->
+  <div class="doodle" style="bottom:25%;left:10%;--r:-10deg;animation-delay:3s;animation-duration:8.5s">
+    <svg width="55" height="55" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 42 Q12 68 40 68 Q68 68 68 42"/>
+      <line x1="12" y1="42" x2="68" y2="42"/>
+      <path d="M20 42 Q40 20 60 42"/>
+      <path d="M30 34 Q35 28 40 34"/>
+      <path d="M43 30 Q48 24 53 30"/>
+    </svg>
+  </div>
+
+  <!-- french fries 2 (top right) -->
+  <div class="doodle" style="top:22%;right:10%;--r:-14deg;animation-delay:1s;animation-duration:9.5s">
+    <svg width="50" height="72" viewBox="0 0 60 90" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 46 L8 82 L52 82 L46 46 Z"/>
+      <line x1="14" y1="46" x2="46" y2="46"/>
+      <path d="M22 10 L22 46" stroke-width="5" stroke-linecap="round"/>
+      <path d="M30 6 L30 46" stroke-width="5" stroke-linecap="round"/>
+      <path d="M38 12 L38 46" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- rava fish 3 (bottom center) -->
+  <div class="doodle" style="bottom:5%;left:38%;--r:5deg;animation-delay:2.5s;animation-duration:11s">
+    <svg width="75" height="48" viewBox="0 0 90 56" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="44" cy="30" rx="28" ry="14"/>
+      <path d="M72 30 L84 18 L84 42 Z"/>
+      <circle cx="24" cy="26" r="2.5" fill="currentColor" stroke="none"/>
+      <circle cx="36" cy="20" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="48" cy="24" r="1.8" fill="currentColor" stroke="none"/>
+      <circle cx="40" cy="36" r="1.8" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+
+  <div class="login-content">
+    <div class="login-eyebrow">a little secret</div>
+
+    <div class="login-intro">
+      psst... this one's<br>
+      <span>only for you.</span>
+    </div>
+    <div class="login-subtext">someone who loves you very much made this.<br>you are my?</div>
+
+    <div class="divider"></div>
+
+    <!-- countdown (hidden once unlocked) -->
+    <div id="countdown-wrap">
+      <div class="countdown-label">until midnight</div>
+      <div class="countdown-digits">
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-h">00</span>
+          <span class="cd-lbl">hrs</span>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-m">00</span>
+          <span class="cd-lbl">min</span>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit">
+          <span class="cd-num" id="cd-s">00</span>
+          <span class="cd-lbl">sec</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="unlock-msg"></div>
+
+    <div class="login-label">your word</div>
+    <input
+      type="password"
+      id="passphrase"
+      class="passphrase-input"
+      placeholder="type it here"
+      autocomplete="off"
+      spellcheck="false"
+      disabled
+    />
+    <button class="enter-btn" id="enter-btn" disabled>Enter &rarr;</button>
+    <p class="error-msg" id="error-msg">placeholder</p>
+  </div>
+</div>
+
+<!-- SCREEN 2: BIRTHDAY -->
+<div id="birthday-screen" class="screen">
+  <canvas id="fireworks-canvas"></canvas>
+  <div class="birthday-text">
+    <div class="birthday-name" id="bday-name"></div>
+    <div class="birthday-sub" id="bday-sub">today is all about you ✨</div>
+  </div>
+  <span class="tap-hint" id="tap-hint">click anywhere to continue</span>
+</div>
+
+<!-- SCREEN 3: GAME -->
+<div id="game-screen" class="screen">
+  <canvas id="trail-canvas"></canvas>
+  <canvas id="burst-canvas"></canvas>
+  <div class="game-intro-text" id="game-intro">Time to cut the cake 🎂</div>
+  <div id="cake">🎂</div>
+  <div id="knife">🔪</div>
+  <svg id="cut-svg" viewBox="0 0 70 70">
+    <circle id="cut-ring" cx="35" cy="35" r="30"/>
+  </svg>
+  <p class="game-hint" id="game-hint">Hold the knife over the cake to cut it</p>
+</div>
+
+<!-- SCREEN 4: ENVELOPE -->
+<div id="env-screen" class="screen">
+  <span class="env-emoji" id="env-emoji">💌</span>
+  <p class="env-text">she's got mail...</p>
+</div>
+
+<!-- SCREEN 5: FINAL -->
+<div id="final-screen" class="screen">
+  <canvas id="confetti-canvas"></canvas>
+  <div class="final-inner">
+    <div class="final-msg">
+      <div class="final-title">
+        To the prettiest, cutest,<br>and grumpiest girlfriend ever.
+      </div>
+      <div class="final-body">
+        Happy Birthday! &hearts;<br><br>
+        Hope the year ahead brings you delicious mutton biryani,<br>
+        endless fish, and non-stop laughter<br>
+        (with me eating half of them, obviously)! :)
+      </div>
+    </div>
+
+    <div class="photo-grid" id="photo-grid">
+      <!--
+        Drop your 6 photos in the same folder as this file.
+        Rename them photo1.jpg ... photo6.jpg
+      -->
+      <div class="photo-slot"><div class="img-wrap"><img src="photo1.jpg" alt=""></div><div class="photo-caption">S01E01: We Said Biryani, We Met a Dog</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo2.jpg" alt=""></div><div class="photo-caption">S01E02: The Official Beginning</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo3.jpg" alt=""></div><div class="photo-caption">S01E03: The First Escape</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo4.jpg" alt=""></div><div class="photo-caption">S01E04: The Extended Cut</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo5.jpg" alt=""></div><div class="photo-caption">S01E05: Fish First, Cricket Second</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo6.jpg" alt=""></div><div class="photo-caption">S01E06: The Sweetest Deal</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo7.jpg" alt=""></div><div class="photo-caption">S01E07: The Hopkins Hypothesis</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo8.jpg" alt=""></div><div class="photo-caption">S01E08: Our First Valentine</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo9.jpg" alt=""></div><div class="photo-caption">S01E09: She Found Another Dog</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo10.jpg" alt=""></div><div class="photo-caption">S01E10: No Distance Too Far (For Fish)</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo11.jpg" alt=""></div><div class="photo-caption">S01E11: The Island Incident</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo12.jpg" alt=""></div><div class="photo-caption">S01E12: My Paplet in Her Natural Habitat</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo13.jpg" alt=""></div><div class="photo-caption">S01E13: The Loose Canon</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo14.jpg" alt=""></div><div class="photo-caption">S01E14: The Eid Protocol</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo15.jpg" alt=""></div><div class="photo-caption">S01E15: The Thirteenth Floor</div></div>
+      <div class="photo-slot"><div class="img-wrap"><img src="photo16.jpg" alt=""></div><div class="photo-caption">S01E16: The Goa Files</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// SPLASH
+// ─────────────────────────────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('splash').remove();
+      document.getElementById('login-screen').classList.add('active');
+      startLoginParticles();
+      startCountdown();
+    }, 900);
+  }, 2800);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+const flash = document.getElementById('flash');
+function doFlash(cb) {
+  flash.style.opacity = '1';
+  setTimeout(() => { cb(); setTimeout(() => { flash.style.opacity = '0'; }, 80); }, 260);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOGIN PARTICLES
+// ─────────────────────────────────────────────────────────────────────────────
+function startLoginParticles() {
+  const canvas = document.getElementById('login-canvas');
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  const ctx = canvas.getContext('2d');
+  const dots = Array.from({ length: 60 }, () => ({
+    x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+    r: 0.8 + Math.random() * 1.2,
+    vx: (Math.random() - 0.5) * 0.22, vy: (Math.random() - 0.5) * 0.22,
+    alpha: 0.07 + Math.random() * 0.15,
+  }));
+  function tick() {
+    requestAnimationFrame(tick);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const d of dots) {
+      d.x += d.vx; d.y += d.vy;
+      if (d.x < 0) d.x = canvas.width; if (d.x > canvas.width) d.x = 0;
+      if (d.y < 0) d.y = canvas.height; if (d.y > canvas.height) d.y = 0;
+      ctx.globalAlpha = d.alpha;
+      ctx.fillStyle = '#c4a0a8';
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  tick();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COUNTDOWN + LOCK
+// ─────────────────────────────────────────────────────────────────────────────
+// 12:00 AM IST September 4 2026 = UTC 2026-09-03 18:30:00
+const BIRTHDAY_TS = Date.UTC(2026, 8, 3, 18, 30, 0);
+// add ?preview to the URL to bypass the time lock (for testing)
+const PREVIEW_MODE = new URLSearchParams(location.search).has('preview');
+
+function pad(n) { return String(n).padStart(2, '0'); }
+
+function startCountdown() {
+  const wrap   = document.getElementById('countdown-wrap');
+  const cdH    = document.getElementById('cd-h');
+  const cdM    = document.getElementById('cd-m');
+  const cdS    = document.getElementById('cd-s');
+  const input  = document.getElementById('passphrase');
+  const btn    = document.getElementById('enter-btn');
+
+  function tick() {
+    const diff = PREVIEW_MODE ? 0 : BIRTHDAY_TS - Date.now();
+    if (diff <= 0) {
+      unlock();
+      return;
+    }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    cdH.textContent = pad(h);
+    cdM.textContent = pad(m);
+    cdS.textContent = pad(s);
+    setTimeout(tick, 1000);
+  }
+  tick();
+}
+
+function unlock() {
+  const wrap  = document.getElementById('countdown-wrap');
+  const msg   = document.getElementById('unlock-msg');
+  const input = document.getElementById('passphrase');
+  const btn   = document.getElementById('enter-btn');
+
+  // fade out countdown
+  wrap.style.transition = 'opacity 0.6s ease';
+  wrap.style.opacity = '0';
+  setTimeout(() => { wrap.style.display = 'none'; }, 600);
+
+  // sparkle message
+  msg.textContent = "it's time. 🎂";
+  msg.classList.add('show');
+
+  // small particle burst on unlock msg
+  setTimeout(() => {
+    msg.style.transition = 'opacity 0.8s ease';
+    msg.style.opacity = '0';
+    setTimeout(() => {
+      msg.style.display = 'none';
+      input.disabled = false;
+      btn.disabled = false;
+      input.focus();
+    }, 800);
+  }, 1800);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PASSWORD
+// ─────────────────────────────────────────────────────────────────────────────
+const PASS = 'bobo';
+const WRONG_MSGS = [
+  "you don't seem like my cute girlfriend... 🤔",
+  "hmm, she would've known that instantly 🥹",
+  "nice try, but you're definitely not her 💀",
+  "nope. only one person knows this, and it's not you 😌",
+];
+let wrongIdx = 0;
+
+function tryEnter() {
+  const val  = document.getElementById('passphrase').value.trim().toLowerCase();
+  const err  = document.getElementById('error-msg');
+  const diff = BIRTHDAY_TS - Date.now();
+
+  if (val === PASS && diff > 0 && !PREVIEW_MODE) {
+    err.textContent = 'patience... midnight hasn\'t struck yet 🕛';
+    err.classList.add('show');
+    setTimeout(() => err.classList.remove('show'), 3000);
+    return;
+  }
+
+  if (val === PASS) {
+    doFlash(() => {
+      show('birthday-screen');
+      startKineticText();
+      launchFireworks();
+    });
+  } else {
+    err.textContent = WRONG_MSGS[wrongIdx % WRONG_MSGS.length];
+    wrongIdx++;
+    err.classList.add('show');
+    setTimeout(() => err.classList.remove('show'), 3000);
+  }
+}
+
+document.getElementById('enter-btn').addEventListener('click', tryEnter);
+document.getElementById('passphrase').addEventListener('keydown', e => {
+  if (e.key === 'Enter') tryEnter();
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// KINETIC TYPOGRAPHY
+// ─────────────────────────────────────────────────────────────────────────────
+function startKineticText() {
+  const nameEl = document.getElementById('bday-name');
+  const sub    = document.getElementById('bday-sub');
+  const hint   = document.getElementById('tap-hint');
+  nameEl.innerHTML = '';
+  let delay = 0;
+  for (const line of ['Happy Birthday,', 'Iuuu!']) {
+    const div = document.createElement('div');
+    for (const ch of line) {
+      const sp = document.createElement('span');
+      sp.className = 'char';
+      sp.textContent = ch;
+      sp.style.animationDelay = delay + 'ms';
+      delay += ch === ' ' ? 30 : 55;
+      div.appendChild(sp);
+    }
+    nameEl.appendChild(div);
+    delay += 120;
+  }
+  setTimeout(() => { sub.style.opacity  = '1'; }, delay + 200);
+  setTimeout(() => { hint.style.opacity = '1'; }, delay + 700);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FIREWORKS
+// ─────────────────────────────────────────────────────────────────────────────
+let fwRAF;
+function launchFireworks() {
+  const canvas = document.getElementById('fireworks-canvas');
+  canvas.width = innerWidth; canvas.height = innerHeight;
+  const ctx = canvas.getContext('2d');
+  const PALETTE = ['#c4a0a8','#f0ead6','#c8a96e','#d4b4bc','#e8d5b7','#fff'];
+  const particles = [];
+
+  function burst() {
+    const x = 0.15*innerWidth + Math.random()*0.7*innerWidth;
+    const y = 0.1*innerHeight + Math.random()*0.55*innerHeight;
+    const col = PALETTE[Math.floor(Math.random()*PALETTE.length)];
+    for (let i = 0; i < 70; i++) {
+      const a = (Math.PI*2*i)/70, s = 2+Math.random()*5;
+      particles.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s,
+        col, alpha: 1, size: 1.5+Math.random()*2, decay: 0.011+Math.random()*0.009 });
+    }
+  }
+
+  let lastBurst = 0;
+  function tick(t) {
+    fwRAF = requestAnimationFrame(tick);
+    ctx.fillStyle = 'rgba(26,18,8,0.18)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (t - lastBurst > 550) { burst(); if (Math.random()>0.45) burst(); lastBurst = t; }
+    for (let i = particles.length-1; i >= 0; i--) {
+      const p = particles[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.06; p.vx*=0.97; p.alpha-=p.decay;
+      if (p.alpha<=0) { particles.splice(i,1); continue; }
+      ctx.globalAlpha=p.alpha; ctx.fillStyle=p.col;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  requestAnimationFrame(tick);
+}
+
+document.getElementById('birthday-screen').addEventListener('click', startGameFlow);
+
+function startGameFlow() {
+  cancelAnimationFrame(fwRAF);
+  document.getElementById('birthday-screen').removeEventListener('click', startGameFlow);
+  show('game-screen');
+  const intro = document.getElementById('game-intro');
+  setTimeout(() => { intro.style.opacity='0'; setTimeout(initGame, 1000); }, 1800);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CAKE GAME
+// ─────────────────────────────────────────────────────────────────────────────
+let mx=-300, my=-300, cx, cy, cvx=0, cvy=0, cutMs=0, sliced=false;
+const trail = [];
+const TRAIL_LEN = 12;
+
+function initGame() {
+  cx = innerWidth/2; cy = innerHeight/2;
+  const cake=document.getElementById('cake'), knife=document.getElementById('knife');
+  const svg=document.getElementById('cut-svg'), ring=document.getElementById('cut-ring');
+  const hint=document.getElementById('game-hint');
+  const trailC=document.getElementById('trail-canvas'), burstC=document.getElementById('burst-canvas');
+  trailC.width=burstC.width=innerWidth; trailC.height=burstC.height=innerHeight;
+  const tCtx=trailC.getContext('2d');
+
+  cake.style.display='block'; knife.style.display='block';
+  svg.style.display='block'; hint.style.display='block';
+
+  const gs = document.getElementById('game-screen');
+  gs.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  gs.addEventListener('touchmove', e => {
+    e.preventDefault();
+    mx=e.touches[0].clientX; my=e.touches[0].clientY;
+  }, { passive: false });
+  gs.addEventListener('touchstart', e => {
+    mx=e.touches[0].clientX; my=e.touches[0].clientY;
+  });
+
+  let last=null;
+  function loop(t) {
+    if (sliced) return;
+    requestAnimationFrame(loop);
+    const dt = last ? Math.min(t-last,50) : 16;
+    last = t;
+
+    knife.style.left=mx+'px'; knife.style.top=my+'px';
+
+    // trail
+    trail.push({x:mx,y:my});
+    if (trail.length>TRAIL_LEN) trail.shift();
+    tCtx.clearRect(0,0,trailC.width,trailC.height);
+    for (let i=0;i<trail.length-1;i++) {
+      tCtx.globalAlpha=(i/trail.length)*0.45;
+      tCtx.fillStyle='#c8a96e';
+      tCtx.beginPath(); tCtx.arc(trail[i].x,trail[i].y,(i/trail.length)*6,0,Math.PI*2); tCtx.fill();
+    }
+    tCtx.globalAlpha=1;
+
+    // smarter flee
+    const dx=mx-cx, dy=my-cy, dist=Math.sqrt(dx*dx+dy*dy);
+    if (dist>0) {
+      const fleeAngle=Math.atan2(cy-my,cx-mx);
+      const wobble=(Math.random()-0.5)*0.55;
+      const isPanic=dist<80;
+      const force=isPanic?6.5:((230-dist)/230)*5;
+      if (dist<230) { cvx+=Math.cos(fleeAngle+wobble)*force*0.28; cvy+=Math.sin(fleeAngle+wobble)*force*0.28; }
+      if (isPanic) cake.classList.add('panic'); else cake.classList.remove('panic');
+    }
+    if (Math.random()<0.02) { cvx+=(Math.random()-0.5)*2; cvy+=(Math.random()-0.5)*2; }
+    const spd=Math.sqrt(cvx*cvx+cvy*cvy);
+    if (spd>10) { cvx=(cvx/spd)*10; cvy=(cvy/spd)*10; }
+    cvx*=0.87; cvy*=0.87;
+    cx+=cvx*(dt/16); cy+=cvy*(dt/16);
+    const pad=65;
+    if (cx<pad){cx=pad;cvx=Math.abs(cvx)*0.7;}
+    if (cx>innerWidth-pad){cx=innerWidth-pad;cvx=-Math.abs(cvx)*0.7;}
+    if (cy<pad){cy=pad;cvy=Math.abs(cvy)*0.7;}
+    if (cy>innerHeight-pad){cy=innerHeight-pad;cvy=-Math.abs(cvy)*0.7;}
+    cake.style.left=cx+'px'; cake.style.top=cy+'px';
+
+    svg.style.left=mx+'px'; svg.style.top=my+'px';
+
+    const dist2=Math.sqrt((mx-cx)**2+(my-cy)**2);
+    if (dist2<58) {
+      cutMs+=dt; ring.style.strokeDashoffset=188-188*Math.min(cutMs/750,1);
+      if (cutMs>=750){sliced=true;doCut(cake);}
+    } else {
+      cutMs=Math.max(0,cutMs-dt*0.6);
+      ring.style.strokeDashoffset=188-188*Math.min(cutMs/750,1);
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+function screenShake() {
+  const b=document.body;
+  b.style.transform='translate(5px,-4px)';
+  setTimeout(()=>{b.style.transform='translate(-4px,3px)';},60);
+  setTimeout(()=>{b.style.transform='translate(3px,-2px)';},120);
+  setTimeout(()=>{b.style.transform='translate(-2px,2px)';},180);
+  setTimeout(()=>{b.style.transform='';},240);
+}
+
+function doCut(cake) {
+  cake.style.display='none'; cake.classList.remove('panic');
+  ['left','right'].forEach(side=>{
+    const el=document.createElement('div');
+    el.className=`cake-half cake-half-${side}`;
+    el.textContent='🎂'; el.style.left=cx+'px'; el.style.top=cy+'px';
+    el.style.animation=`split${side==='left'?'Left':'Right'} 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),800);
+  });
+
+  const burstC=document.getElementById('burst-canvas');
+  burstC.style.display='block';
+  const bCtx=burstC.getContext('2d');
+  const COLS=['#c4a0a8','#c8a96e','#f0ead6','#e8c4c0','#d4b4bc'];
+  const bParts=Array.from({length:18},()=>{
+    const a=Math.random()*Math.PI*2, s=4+Math.random()*7;
+    return {x:cx,y:cy,vx:Math.cos(a)*s,vy:Math.sin(a)*s,r:4+Math.random()*5,
+      col:COLS[Math.floor(Math.random()*5)],alpha:1,decay:0.028};
+  });
+  function burstTick(){
+    bCtx.clearRect(0,0,burstC.width,burstC.height);
+    let alive=false;
+    for(const p of bParts){
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.2;p.alpha-=p.decay;
+      if(p.alpha>0){alive=true;bCtx.globalAlpha=p.alpha;bCtx.fillStyle=p.col;
+        bCtx.beginPath();bCtx.arc(p.x,p.y,p.r,0,Math.PI*2);bCtx.fill();}
+    }
+    bCtx.globalAlpha=1;
+    if(alive)requestAnimationFrame(burstTick);else burstC.style.display='none';
+  }
+  requestAnimationFrame(burstTick);
+  screenShake();
+
+  setTimeout(()=>{
+    show('env-screen');
+    const ee=document.getElementById('env-emoji');
+    ee.classList.remove('open'); void ee.offsetWidth;
+    setTimeout(()=>{
+      ee.classList.add('open');
+      setTimeout(()=>doFlash(()=>{show('final-screen');startConfetti();initPolaroids();}),500);
+    },1400);
+  },700);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONFETTI
+// ─────────────────────────────────────────────────────────────────────────────
+function startConfetti() {
+  const canvas=document.getElementById('confetti-canvas');
+  canvas.width=innerWidth; canvas.height=innerHeight;
+  const ctx=canvas.getContext('2d');
+  const COLS=['#c4a0a8','#f0ead6','#c8a96e','#e8c4c0','#d4b4bc','#f5e6d3','#b8d4e8'];
+  const pieces=Array.from({length:180},()=>({
+    x:Math.random()*canvas.width, y:-25-Math.random()*canvas.height*0.5,
+    w:7+Math.random()*8, h:3+Math.random()*5,
+    col:COLS[Math.floor(Math.random()*COLS.length)],
+    vx:(Math.random()-0.5)*2.5, vy:1.8+Math.random()*3.5,
+    rot:Math.random()*Math.PI*2, rv:(Math.random()-0.5)*0.2,
+    alpha:0.85+Math.random()*0.15,
+  }));
+  function tick(){
+    if(!pieces.some(p=>p.y<canvas.height+30))return;
+    requestAnimationFrame(tick);
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of pieces){
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.04;p.rot+=p.rv;
+      if(p.y>canvas.height+30)continue;
+      ctx.globalAlpha=p.alpha;ctx.fillStyle=p.col;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+    }
+    ctx.globalAlpha=1;
+  }
+  requestAnimationFrame(tick);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POLAROIDS
+// ─────────────────────────────────────────────────────────────────────────────
+function initPolaroids() {
+  document.querySelectorAll('.photo-slot').forEach(slot=>{
+    const rot=(Math.random()*8)-4;
+    slot.style.transform=`rotate(${rot}deg)`;
+    slot.dataset.baseRot=rot;
+    slot.addEventListener('mousemove',e=>{
+      const r=slot.getBoundingClientRect();
+      const px=(e.clientX-r.left)/r.width-0.5;
+      const py=(e.clientY-r.top)/r.height-0.5;
+      slot.style.transform=`rotate(0deg) scale(1.08) perspective(600px) rotateY(${px*12}deg) rotateX(${-py*12}deg)`;
+    });
+    slot.addEventListener('mouseleave',()=>{slot.style.transform=`rotate(${slot.dataset.baseRot}deg)`;});
+  });
+}
+</script>
+</body>
+</html>
